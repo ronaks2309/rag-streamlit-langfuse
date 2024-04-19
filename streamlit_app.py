@@ -96,7 +96,7 @@ def initialize_session_state():
 
     if 'langfuse_handler' not in st.session_state:
         user_id = "Not Assigned"
-        session_id = f'{user_id} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}'
+        session_id = f"{user_id} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         reset_langfuse_handler(user_id = user_id, session_id = session_id)
         print("languse handler declared!")
     
@@ -254,7 +254,7 @@ def main():
     if st.sidebar.button("Go"):
         with st.spinner("Connecting to vector dB"):
             reset_langfuse_handler(user_id = st.session_state.user_name, 
-                session_id = f'{st.session_state.user_name} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}') 
+                session_id = f"{st.session_state.user_name} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}") 
             st.session_state.chain = get_conversation_chain(selected_index)
     if st.sidebar.button("Clear History"):
         st.session_state['history'] = []
