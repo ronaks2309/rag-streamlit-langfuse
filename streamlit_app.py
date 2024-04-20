@@ -268,8 +268,7 @@ def main():
     st.sidebar.write("### Caution")
     st.sidebar.write("Experimental prototype may have bugs")
     st.sidebar.write(f":red[NOT SECURE.AVOID PRIVATE DATA]")
-    st.sidebar.write("Documentation: coming soon...")
-    st.sidebar.write("Demo: https://youtu.be/FYkxdvGPo0k")
+    st.sidebar.write("Guidelines: https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F")
     st.sidebar.write("Thank you for testing!")
     st.sidebar.write("Questions? Slack channel: TBD")
     
