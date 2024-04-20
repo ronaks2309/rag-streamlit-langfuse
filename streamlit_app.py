@@ -43,6 +43,7 @@ from langfuse.callback import CallbackHandler
 from langfuse import Langfuse
 import uuid
 from datetime import datetime
+from urllib.parse import quote
 
 
 print("Helloworld")
@@ -177,6 +178,8 @@ def display_chats():
                                             align="flex-start",
                                             on_submit=add_feedback_to_trace,
                                             )
+                        with st.expander("See References"):
+                            st.write(st.session_state.unique_src_list)
 
 def submit():
     print ("Submit method called")
@@ -203,17 +206,18 @@ def handle_user_question(user_question):
     src_docs = st.session_state.retriever.get_relevant_documents(user_question)
     unique_ref_text = get_unique_references(src_docs)
     st.session_state['past'].append(user_question)
-    st.session_state['generated'].append(result["answer"] + "\n\n" + "To Learn more, visit: \n" + unique_ref_text) 
+    st.session_state['generated'].append(result["answer"])# + "\n\n" + "References: \n" + unique_ref_text) 
     return
 
 def get_unique_references(src_docs):
     # create list of sources
     src_list = []
     for doc in src_docs:
-        src_list.append(doc.metadata.get('source').rpartition("\\")[-1])
+        file_name = doc.metadata.get('source').rpartition("\\")[-1].rpartition("/")[-1]
+        src_list.append(file_name)
     #deduplicate
-    unique_src_list = list(dict.fromkeys(src_list))
-    unique_ref_text = "\n".join(unique_src_list)
+    st.session_state.unique_src_list = list(dict.fromkeys(src_list))
+    unique_ref_text = "\n".join(st.session_state.unique_src_list)
     return unique_ref_text
 
 def get_pinecone_index_list():
