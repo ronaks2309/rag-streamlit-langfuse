@@ -44,7 +44,10 @@ from langfuse import Langfuse
 import uuid
 from datetime import datetime
 from urllib.parse import quote
-#small change 2
+#small change 3
+
+import subprocess
+git_version = subprocess.check_output(["git","describe"]).strip()
 
 print("Helloworld")
 
@@ -322,7 +325,7 @@ def reset_langfuse_handler (user_id, session_id):
     print("Reset Langfuse handler method called")
     if 'langfuse_handler' in st.session_state:
         del st.session_state.langfuse_handler
-    st.session_state['langfuse_handler'] = CallbackHandler(user_id = user_id, session_id = session_id)
+    st.session_state['langfuse_handler'] = CallbackHandler(user_id = user_id, session_id = session_id, version=git_version)
     print("Langfuse Handler reset with user: " + user_id + "session Id: " + session_id)
 
 
@@ -359,7 +362,7 @@ def main():
     url = "https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F"
     st.sidebar.write("Kickoff: [Slide deck](%s)" % url)
     slack_url = "https://walmart.enterprise.slack.com/archives/C070HND53Q8"
-    st.sidebar.write("Slack: [#wmc-internal-chatbot-testing](%s)" % slack_url)
+    st.sidebar.write("Questions or Feedback? Slack: [#wmc-internal-chatbot-testing](%s)" % slack_url)
     st.sidebar.write("Thank you for testing!")
     
 
