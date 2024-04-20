@@ -44,7 +44,7 @@ from langfuse import Langfuse
 import uuid
 from datetime import datetime
 from urllib.parse import quote
-#small change 3
+
 
 import subprocess
 git_version = subprocess.check_output(["git","describe"]).strip()
@@ -52,6 +52,7 @@ git_version = subprocess.check_output(["git","describe"]).strip()
 print("Helloworld")
 
 st.session_state.feedback_type = "faces"
+
 
 def add_feedback_to_trace(feedback):
     print("add_feedback_method_called")
@@ -67,11 +68,7 @@ def add_feedback_to_trace(feedback):
     scores = score_mappings[st.session_state.feedback_type]
     # Get the score from the selected feedback option's score mapping
     feedback_value = scores.get(feedback["score"])
-
-    #feedback_value = 1 if feedback["score"]=="👍" else 0  
-    # For future, add faces instead of thumbs for a more granular feedback
     feedback_comment = feedback["text"]
-    #trace_id = "f4e4baa5-5e3c-4083-8b4e-756e240a23b9"
     trace_id = st.session_state.my_trace_id
     print("Trace ID received by add_feedback_to_trace method is: ")
     print(trace_id)
@@ -84,9 +81,7 @@ def add_feedback_to_trace(feedback):
     )
     st.toast("Thank you! Your feedback has been recorded ✅")
     return
-    #display_chats()
-
-
+    
 
 
 def initialize_session_state():
@@ -131,7 +126,8 @@ def get_conversation_chain(selected_index):
     pc = pinecone_Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
     index_name = selected_index
     vector_db = Pinecone.from_existing_index(index_name, embeddings)
-    llm = ChatOpenAI(model = 'gpt-3.5-turbo-0125', temperature = 0.1, callbacks=[st.session_state.langfuse_handler, llmonitor_handler]) 
+    st.session_state.llm = ChatOpenAI(model = 'gpt-3.5-turbo-0125', temperature = 0.1, callbacks=[st.session_state.langfuse_handler, llmonitor_handler]) 
+    llm = st.session_state.llm
     memory = ConversationBufferMemory(memory_key="chat_history", output_key = 'answer',return_messages=True)
     # https://api.python.langchain.com/en/latest/vectorstores/langchain_community.vectorstores.pinecone.Pinecone.html#langchain_community.vectorstores.pinecone.Pinecone.as_retriever
     st.session_state.retriever=vector_db.as_retriever(search_type = "similarity", search_kwargs={"k": 5})
@@ -159,13 +155,6 @@ def display_chats():
         st.text_input("Question:", placeholder="Ask a question", key='input', on_change = submit)
 
 
-    # if st.session_state['generated']:
-    #     with reply_container:
-    #         for i in range(len(st.session_state['generated'])):
-    #             message(st.session_state["past"][i], is_user=True, key=str(i) + '_user', avatar_style="thumbs")
-    #             message(st.session_state["generated"][i], key=str(i), avatar_style="fun-emoji") 
-    
-
     if st.session_state['generated']:
          with reply_container:
              for i in range(len(st.session_state['generated'])):
@@ -173,6 +162,7 @@ def display_chats():
                     st.write(st.session_state["past"][i])
                 with st.chat_message("assistant"):
                     st.write(st.session_state["generated"][i]) 
+                    # If this is the last message, then ask for feedback and print Citations
                     if i == len(st.session_state['generated'])-1 and i>0:
                         feedback_key = f"feedback_key_{i}"
                         print(f"The Feedback key is :" + feedback_key)
@@ -184,28 +174,9 @@ def display_chats():
                                             on_submit=add_feedback_to_trace,
                                             )
                         with st.expander("View Citations"):
-                            #st.write(st.session_state.original_docs)
-                            #st.write(st.session_state.unique_src_list)
-                            #src_list=[]
-                            #for doc in st.session_state.original_docs:
-                               # st.write(type(doc))
-                               # st.write(doc.dict())
-                               # st.write(doc.dict()["page_content"])
-                               # st.write(doc.dict()["metadata"]["source"])
-                                #file_name = doc.metadata.get('source').rpartition("\\")[-1].rpartition("/")[-1]
-                                #src_list.append(file_name)
-                            #st.write(src_list)
                             references = get_references()
-                            #i=0
-                            #for ref in references:
-                                #i=i+1
-                                #st.write(ref)
-                                #st.write(i)
-                                #st.code(ref.get('url'))
-                                #st.code(ref.get('page_content'))
-                                #st.divider()
+                            # This needs to be dynamic in future. Right now 5 tabs are hardcoded
                             tab1, tab2, tab3, tab4, tab5 = st.tabs(["Citation 1", "Citation 2", "Citation 3", "Citation 4", "Citation 5"])
-
                             with tab1:
                                 st.write(references[0].get('url'))
                                 st.write(references[0].get('page_content'))
@@ -249,20 +220,8 @@ def handle_user_question(user_question):
     st.session_state.my_trace_id = st.session_state.langfuse_handler.get_trace_id()
     print(st.session_state.langfuse_handler.get_trace_id()) # This is working!
     st.session_state['history'].append((user_question, result["answer"]))
-    #src_docs = st.session_state.retriever.get_relevant_documents(user_question)
     st.session_state.original_docs = result.get('source_documents')
-    #print('\n\n\n')
-    #print("---------------------Original  Documents TYPE -------------------------------------")
-    #print(type(st.session_state.original_docs))
-    #unique_ref_text = get_unique_references(st.session_state.original_docs)
-    #unique_ref_text = get_unique_references(src_docs)
-    #print('\n\n\n')
-    #print("---------------------Original  Documents -------------------------------------")
-    #print(st.session_state.original_docs)
     st.session_state['past'].append(user_question)
-    #print('\n\n\n')
-    #print("---------------------Result -------------------------------------")
-    #print(result)
     st.session_state['generated'].append(result["answer"])# + "\n\n" + "References: \n" + unique_ref_text) 
     return
 
@@ -367,8 +326,6 @@ def main():
     st.sidebar.write("Questions or Feedback? Slack: [#wmc-internal-chatbot-testing](%s)" % slack_url)
     st.sidebar.write("Thank you for testing!")
     
-
-
     
 
     display_chats()
