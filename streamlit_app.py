@@ -127,7 +127,7 @@ def get_conversation_chain(selected_index):
     index_name = selected_index
     vector_db = Pinecone.from_existing_index(index_name, embeddings)
     llm = ChatOpenAI(model = 'gpt-3.5-turbo-0125', temperature = 0.1, callbacks=[st.session_state.langfuse_handler, llmonitor_handler]) 
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    memory = ConversationBufferMemory(memory_key="chat_history", output_key = 'answer',return_messages=True)
     # https://api.python.langchain.com/en/latest/vectorstores/langchain_community.vectorstores.pinecone.Pinecone.html#langchain_community.vectorstores.pinecone.Pinecone.as_retriever
     st.session_state.retriever=vector_db.as_retriever(search_type = "similarity", search_kwargs={"k": 5})
     conversation_chain = ConversationalRetrievalChain.from_llm(
@@ -135,8 +135,8 @@ def get_conversation_chain(selected_index):
         chain_type='stuff', 
         retriever=st.session_state.retriever,
         memory=memory, 
-        callbacks=[st.session_state.langfuse_handler, llmonitor_handler] 
-        #return_source_documents = True
+        callbacks=[st.session_state.langfuse_handler, llmonitor_handler],
+        return_source_documents = True
         )
     st.success("Custom Agent selected: "+index_name)
     return conversation_chain
@@ -178,8 +178,47 @@ def display_chats():
                                             align="flex-start",
                                             on_submit=add_feedback_to_trace,
                                             )
-                        with st.expander("See References"):
-                            st.write(st.session_state.unique_src_list)
+                        with st.expander("View Citations"):
+                            #st.write(st.session_state.original_docs)
+                            #st.write(st.session_state.unique_src_list)
+                            #src_list=[]
+                            #for doc in st.session_state.original_docs:
+                               # st.write(type(doc))
+                               # st.write(doc.dict())
+                               # st.write(doc.dict()["page_content"])
+                               # st.write(doc.dict()["metadata"]["source"])
+                                #file_name = doc.metadata.get('source').rpartition("\\")[-1].rpartition("/")[-1]
+                                #src_list.append(file_name)
+                            #st.write(src_list)
+                            references = get_references()
+                            #i=0
+                            #for ref in references:
+                                #i=i+1
+                                #st.write(ref)
+                                #st.write(i)
+                                #st.code(ref.get('url'))
+                                #st.code(ref.get('page_content'))
+                                #st.divider()
+                            tab1, tab2, tab3, tab4, tab5 = st.tabs(["Citation 1", "Citation 2", "Citation 3", "Citation 4", "Citation 5"])
+
+                            with tab1:
+                                st.write(references[0].get('url'))
+                                st.write(references[0].get('page_content'))
+                            with tab2:
+                                st.write(references[1].get('url'))
+                                st.write(references[1].get('page_content'))
+                            with tab3:
+                                st.write(references[2].get('url'))
+                                st.write(references[2].get('page_content'))
+                            with tab4:
+                                st.write(references[3].get('url'))
+                                st.write(references[3].get('page_content'))
+                            with tab5:
+                                st.write(references[4].get('url'))
+                                st.write(references[4].get('page_content'))
+                            
+
+
 
 def submit():
     print ("Submit method called")
@@ -203,15 +242,28 @@ def handle_user_question(user_question):
     st.session_state.my_trace_id = st.session_state.langfuse_handler.get_trace_id()
     print(st.session_state.langfuse_handler.get_trace_id()) # This is working!
     st.session_state['history'].append((user_question, result["answer"]))
-    src_docs = st.session_state.retriever.get_relevant_documents(user_question)
-    unique_ref_text = get_unique_references(src_docs)
+    #src_docs = st.session_state.retriever.get_relevant_documents(user_question)
+    st.session_state.original_docs = result.get('source_documents')
+    print('\n\n\n')
+    print("---------------------Original  Documents TYPE -------------------------------------")
+    print(type(st.session_state.original_docs))
+    unique_ref_text = get_unique_references(st.session_state.original_docs)
+    #unique_ref_text = get_unique_references(src_docs)
+    print('\n\n\n')
+    #print("---------------------Original  Documents -------------------------------------")
+    #print(st.session_state.original_docs)
     st.session_state['past'].append(user_question)
+    print('\n\n\n')
+    print("---------------------Result -------------------------------------")
+    print(result)
     st.session_state['generated'].append(result["answer"])# + "\n\n" + "References: \n" + unique_ref_text) 
     return
 
 def get_unique_references(src_docs):
     # create list of sources
     src_list = []
+    print('\n\n\n ---------------------Source Docs -------------------------------------')
+    print(src_docs)
     for doc in src_docs:
         file_name = doc.metadata.get('source').rpartition("\\")[-1].rpartition("/")[-1]
         src_list.append(file_name)
@@ -219,6 +271,40 @@ def get_unique_references(src_docs):
     st.session_state.unique_src_list = list(dict.fromkeys(src_list))
     unique_ref_text = "\n".join(st.session_state.unique_src_list)
     return unique_ref_text
+
+def get_references():
+    pdf_urls = {
+        "Guide - Create Ad Groups Step-4.pdf": "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000008380",
+        "Guide - Suggested Bids.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000009825",
+        "Guide - Custom Reports.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000009797",
+        "Guide - On Demand Reports.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000009366",
+        "Guide - Item Health Reports.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000009389",
+        "Guide - All Campaigns.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000008410",
+        "Guide - Add and Select Keywords - Step 5.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000008383",
+        "Guide - Set Placement Inclusion - Step 2.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000009457",
+        "Guide - Create a campaign - Step 1.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000008379",
+        "Guide - All Keywords.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000011134",
+        "Guide - Add Bid Multipliers - Step 3.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000008409",
+        "Guide - Add Items to Ad Group Step 4 (continued).pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000008382",
+        "ALL FAQS - Sponsored Vidoes.pdf" : "https://advertisinghelp.walmart.com/s/faqs?channel=SponsoredVideos&article=Introduction_to_Sponsored_Videos_SponsoredVideos_FAQs",
+        "ALL FAQS - Sponsored Brands.pdf" : "https://advertisinghelp.walmart.com/s/faqs?channel=Search%20Brand%20Amplifier&article=Advertising_basics_SBA_FAQs",
+        "ALL FAQS - Shop Builder.pdf" : "https://advertisinghelp.walmart.com/s/faqs?channel=ShopBuilder&article=Advertising_basics_ShopBuilder_FAQs",
+        "ALL FAQS - Display.pdf" : "https://advertisinghelp.walmart.com/s/faqs?channel=Display&article=Performance_Dashboard_Display_FAQ",
+        "ALL FAQS - Sponsored Products.pdf" : "https://advertisinghelp.walmart.com/s/faqs?channel=Sponsored%20Products&article=Item_Health_Report",
+        "Guide - Overview of Sponsored Products.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored%20Products&article=000008449",
+        "Guide - Advertiser Reports.pdf" : "https://advertisinghelp.walmart.com/s/guides?channel=Sponsored&article=000008390"
+    }
+    references = []
+    for doc in st.session_state.original_docs:
+        page_content = doc.dict()["page_content"]
+        #src_file = doc.dict()["metadata"]["source"]
+        src_file = doc.metadata.get('source').rpartition("\\")[-1].rpartition("/")[-1]
+        url = pdf_urls.get(src_file)
+        chunk = {"url":url, "page_content": page_content}
+        references.append(chunk)
+    return references
+
+
 
 def get_pinecone_index_list():
    pc = pinecone_Pinecone(api_key=st.secrets["PINECONE_API_KEY"])
@@ -268,7 +354,8 @@ def main():
     st.sidebar.write("### Caution")
     st.sidebar.write("Experimental prototype may have bugs")
     st.sidebar.write(f":red[NOT SECURE.AVOID PRIVATE DATA]")
-    st.sidebar.write("Guidelines: https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F")
+    url = "https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F"
+    st.sidebar.write("Guideline for use [link](%s)" % url)
     st.sidebar.write("Thank you for testing!")
     st.sidebar.write("Questions? Slack channel: TBD")
     
