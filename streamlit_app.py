@@ -80,6 +80,8 @@ def add_feedback_to_trace(feedback):
         comment=feedback_comment
     )
     st.toast("Thank you! Your feedback has been recorded ✅")
+    return
+    #display_chats()
 
 
 
@@ -145,7 +147,7 @@ def get_conversation_chain(selected_index):
 
 #### USER INQUIRY ####
 def display_chats():
-    print("display chats method called")
+    print("display chats method called: Length of generated is " + str(len(st.session_state['generated'])))
     reply_container = st.container()
     container = st.container()
     notes_container = st.container()
@@ -244,18 +246,18 @@ def handle_user_question(user_question):
     st.session_state['history'].append((user_question, result["answer"]))
     #src_docs = st.session_state.retriever.get_relevant_documents(user_question)
     st.session_state.original_docs = result.get('source_documents')
-    print('\n\n\n')
-    print("---------------------Original  Documents TYPE -------------------------------------")
-    print(type(st.session_state.original_docs))
-    unique_ref_text = get_unique_references(st.session_state.original_docs)
+    #print('\n\n\n')
+    #print("---------------------Original  Documents TYPE -------------------------------------")
+    #print(type(st.session_state.original_docs))
+    #unique_ref_text = get_unique_references(st.session_state.original_docs)
     #unique_ref_text = get_unique_references(src_docs)
-    print('\n\n\n')
+    #print('\n\n\n')
     #print("---------------------Original  Documents -------------------------------------")
     #print(st.session_state.original_docs)
     st.session_state['past'].append(user_question)
-    print('\n\n\n')
-    print("---------------------Result -------------------------------------")
-    print(result)
+    #print('\n\n\n')
+    #print("---------------------Result -------------------------------------")
+    #print(result)
     st.session_state['generated'].append(result["answer"])# + "\n\n" + "References: \n" + unique_ref_text) 
     return
 
