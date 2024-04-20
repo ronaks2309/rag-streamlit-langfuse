@@ -355,9 +355,10 @@ def main():
     st.sidebar.write("Experimental prototype may have bugs")
     st.sidebar.write(f":red[NOT SECURE.AVOID PRIVATE DATA]")
     url = "https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F"
-    st.sidebar.write("Guideline for use [link](%s)" % url)
+    st.sidebar.write("Kickoff: [Slide deck](%s)" % url)
+    slack_url = "https://walmart.enterprise.slack.com/archives/C070HND53Q8"
+    st.sidebar.write("Slack: [#wmc-internal-chatbot-testing](%s)" % slack_url)
     st.sidebar.write("Thank you for testing!")
-    st.sidebar.write("Questions? Slack channel: TBD")
     
 
 
