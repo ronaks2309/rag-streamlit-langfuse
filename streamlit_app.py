@@ -221,6 +221,8 @@ def display_chats():
                             with tab5:
                                 st.write(references[4].get('url'))
                                 st.write(references[4].get('page_content'))
+    return
+     
                             
 
 
