@@ -6,15 +6,29 @@
 
 ## Next steps
 # Create User ID, Session ID - Done
-# Update vector store with all FAQ pages
+# Update vector store with all FAQ pages - Done
 # Check out Streamlit UI re-loading issue, and reduce function calls
-# Deploy app on streamlit
-# Explore Experiments Datasets in Langfuse
-# Clean up the Name of Source docs
-# Show the actual chunks in the expander
-# Add Version and Release to the Handler
+# Deploy app on streamlit - Done
+# Explore Experiments Datasets in Langfuse, and auto run
+# Clean up the Name of Source docs - Done
+# Show the actual chunks in the expander - Done
+# Add Version and Release to the Handler - Done
 # Add user authentication
 #https://blog.streamlit.io/streamlit-authenticator-part-1-adding-an-authentication-component-to-your-app/
+# Automatic question prompts/suggested questions
+# Auto Version / Release numbering
+# Response evaluation for scores, and take appropriate action - 
+# Re-generate response if negative response
+# Router chain with multiple agents
+# Try A/B test with MMR type retrival
+# Offer Custom Agent builder interface
+# Add capability to parse embedded tables, images, videos
+# Add capability to input webpages, slack, confluence
+# Microservice architecture - break the app front end, conversation serivce, chat histry (database), LLM, Vector store 
+#https://www.youtube.com/watch?v=I_4jEnDwGwI&t=334s
+
+# Add Routing, Fallback, Self Correction: https://www.youtube.com/watch?v=-ROS6gfYIts
+
 
 import warnings
 
@@ -318,13 +332,18 @@ def main():
         st.session_state['past'] = ["Hey! 👋"]
     st.sidebar.write("\n\n\n\n")
     st.sidebar.write("### Caution")
-    st.sidebar.write("Experimental prototype may have bugs")
-    st.sidebar.write(f":red[NOT SECURE.AVOID PRIVATE DATA]")
-    url = "https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F"
-    st.sidebar.write("Kickoff: [Slide deck](%s)" % url)
+    st.sidebar.write(f":red[Not privacy/security approved. Avoid proprietary info]")
+    
+    st.sidebar.write("This MVP is our starting point 🌱, knowing it won't be flawless. Together, we'll keep improving until it's perfect🚀.")
     slack_url = "https://walmart.enterprise.slack.com/archives/C070HND53Q8"
-    st.sidebar.write("Questions or Feedback? Slack: [#wmc-internal-chatbot-testing](%s)" % slack_url)
-    st.sidebar.write("Thank you for testing!")
+    st.sidebar.write("Questions or Feedback? Slack: [#wmc-internal-chatbot-mvp](%s)" % slack_url)
+    knowledge_scope_url= "https://my.wal-mart.com/:i:/g/personal/r0s01vi_homeoffice_wal-mart_com/EXhNiIc90eBBkdcr5_mW0C0B8mf-BHAyvb4M9gPl1LatXQ?e=AWOI9G"    
+    st.sidebar.write("Trained only on [Subset of Help Pages](%s)" % knowledge_scope_url)
+    url = "https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F"
+    st.sidebar.write("More details in [Kickoff slide deck](%s)" % url)
+    what_is_rag = 'https://www.databricks.com/glossary/retrieval-augmented-generation-rag'
+    st.sidebar.write("Built using [RAG architecture](%s)" %what_is_rag)
+    st.sidebar.write("Thank you!")
     
     
 
