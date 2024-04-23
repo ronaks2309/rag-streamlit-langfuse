@@ -28,6 +28,9 @@
 #https://www.youtube.com/watch?v=I_4jEnDwGwI&t=334s
 
 # Add Routing, Fallback, Self Correction: https://www.youtube.com/watch?v=-ROS6gfYIts
+# Advance retrieval chains such as multiple versions of the question
+# Eplore what is a Dense Passage Retrieval DPR
+
 
 
 import warnings
