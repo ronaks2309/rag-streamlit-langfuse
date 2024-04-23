@@ -1,8 +1,11 @@
 # these files will not be pushed to git
+.streamlit/*
 secrets.toml
+secrets
 pinecone_test.py
 lida_example.py
 lida_app.py
+test_file.py
 #Data folder containing temporary pdf files
 #data/
 
