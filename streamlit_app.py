@@ -341,7 +341,7 @@ def main():
     
     st.sidebar.write("This MVP is our starting point 🌱, knowing it won't be flawless. Together, we'll keep improving until it's perfect🚀.")
     slack_url = "https://walmart.enterprise.slack.com/archives/C070HND53Q8"
-    st.sidebar.write("Questions or Feedback? Slack: [#wmc-internal-chatbot-mvp](%s)" % slack_url)
+    st.sidebar.write("Questions/Issues? Slack: [#wmc-internal-chatbot-mvp](%s)" % slack_url)
     knowledge_scope_url= "https://my.wal-mart.com/:i:/g/personal/r0s01vi_homeoffice_wal-mart_com/EXhNiIc90eBBkdcr5_mW0C0B8mf-BHAyvb4M9gPl1LatXQ?e=AWOI9G"    
     st.sidebar.write("Trained only on [Subset of Help Pages](%s)" % knowledge_scope_url)
     url = "https://my.wal-mart.com/:p:/g/personal/s0m0o96_homeoffice_wal-mart_com/EcexNGllYxxCpDKL1vf2FAEBTbn2sEdodF3w84lo6zPIkQ?e=TkNU2F"
