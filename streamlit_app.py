@@ -190,6 +190,8 @@ def display_chats():
                                             align="flex-start",
                                             on_submit=add_feedback_to_trace,
                                             )
+                        st.markdown("***Disclaimer:*** *My responses may be inaccurate. Verify citations. Feel free to ask follow-up questions For eg. 'Tell me more', 'Are you sure?'*")
+
                         with st.expander("View Citations"):
                             references = get_references()
                             # This needs to be dynamic in future. Right now 5 tabs are hardcoded
