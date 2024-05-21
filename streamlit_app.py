@@ -5,6 +5,8 @@
 # Command to launch >> streamlit run streamlit_app.py
 
 ## Next steps
+# Understand what is LCEL pipeline, and revamp the code with the new Langchain Paradigm. Runnables?
+# Undestand what is Langgraph
 # Create User ID, Session ID - Done
 # Update vector store with all FAQ pages - Done
 # Check out Streamlit UI re-loading issue, and reduce function calls

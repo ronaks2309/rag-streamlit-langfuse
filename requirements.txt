@@ -15,3 +15,5 @@ torch
 lida[transformers]
 streamlit_feedback
 langfuse
+langchain-community
+
