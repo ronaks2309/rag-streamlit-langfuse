@@ -7,6 +7,7 @@
 ## Next steps
 # Understand what is LCEL pipeline, and revamp the code with the new Langchain Paradigm. Runnables?
 # Undestand what is Langgraph
+# Find out if we can set a score_threshhold for retriever. 
 # Create User ID, Session ID - Done
 # Update vector store with all FAQ pages - Done
 # Check out Streamlit UI re-loading issue, and reduce function calls
@@ -32,6 +33,7 @@
 # Add Routing, Fallback, Self Correction: https://www.youtube.com/watch?v=-ROS6gfYIts
 # Advance retrieval chains such as multiple versions of the question
 # Eplore what is a Dense Passage Retrieval DPR
+# Benchmark performance vs off-the-shelf tools Vertex AI Conversational, ChatGPT Assistant agents.
 
 
 
@@ -149,7 +151,7 @@ def get_conversation_chain(selected_index):
     llm = st.session_state.llm
     memory = ConversationBufferMemory(memory_key="chat_history", output_key = 'answer',return_messages=True)
     # https://api.python.langchain.com/en/latest/vectorstores/langchain_community.vectorstores.pinecone.Pinecone.html#langchain_community.vectorstores.pinecone.Pinecone.as_retriever
-    st.session_state.retriever=vector_db.as_retriever(search_type = "similarity", search_kwargs={"k": 5})
+    st.session_state.retriever=vector_db.as_retriever(search_type = "similarity", search_kwargs={"k": 3})
     conversation_chain = ConversationalRetrievalChain.from_llm(
         llm=llm, 
         chain_type='stuff', 
@@ -197,7 +199,7 @@ def display_chats():
                         with st.expander("View Citations"):
                             references = get_references()
                             # This needs to be dynamic in future. Right now 5 tabs are hardcoded
-                            tab1, tab2, tab3, tab4, tab5 = st.tabs(["Citation 1", "Citation 2", "Citation 3", "Citation 4", "Citation 5"])
+                            tab1, tab2, tab3 = st.tabs(["Citation 1", "Citation 2", "Citation 3"])
                             with tab1:
                                 st.write(references[0].get('url'))
                                 st.write(references[0].get('page_content'))
@@ -207,12 +209,7 @@ def display_chats():
                             with tab3:
                                 st.write(references[2].get('url'))
                                 st.write(references[2].get('page_content'))
-                            with tab4:
-                                st.write(references[3].get('url'))
-                                st.write(references[3].get('page_content'))
-                            with tab5:
-                                st.write(references[4].get('url'))
-                                st.write(references[4].get('page_content'))
+                            
     return
      
                             
