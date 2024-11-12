@@ -314,7 +314,7 @@ def main():
     initialize_session_state()
     #get_conversation_chain('wmc-faq')
     st.set_page_config(page_title="WMC GenAI Playground", page_icon = ":seedling:")
-    st.subheader("WMC AI Assistant")
+    st.subheader("WMC Help Center AI - Assistant")
     sideb = st.sidebar
     #st.sidebar.title("Select Pinecone Index")
     selected_index = sideb.selectbox(
